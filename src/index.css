@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap');
+
+:root {
+  --font-latin: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-arabic: 'Noto Naskh Arabic', 'Inter', sans-serif;
+}
+
+html[lang='en'] body { font-family: var(--font-latin); }
+html[lang='ur'] body, html[lang='sd'] body { font-family: var(--font-arabic); }
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Leaflet z-index fix for sidebar */
+.leaflet-container { z-index: 0; }
+.leaflet-pane, .leaflet-top, .leaflet-bottom { z-index: 1; }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus visibility */
+*:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Custom scrollbar */
+.sidebar-scroll::-webkit-scrollbar { width: 6px; }
+.sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+
+/* Marker cluster override */
+.marker-cluster-small { background-color: rgba(30, 64, 175, 0.6); }
+.marker-cluster-small div { background-color: rgba(30, 64, 175, 0.8); }
+.marker-cluster-medium { background-color: rgba(245, 158, 11, 0.6); }
+.marker-cluster-medium div { background-color: rgba(245, 158, 11, 0.8); }
+.marker-cluster-large { background-color: rgba(239, 68, 68, 0.6); }
+.marker-cluster-large div { background-color: rgba(239, 68, 68, 0.8); }
