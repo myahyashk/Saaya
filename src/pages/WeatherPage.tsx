@@ -4,7 +4,7 @@ import { useWeather } from '@/hooks/useData';
 import { LoadingState, ErrorState, EmptyState } from '@/components/States';
 import { formatHour, formatDate } from '@/utils/risk';
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine,
+  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
 
 export default function WeatherPage() {

@@ -71,10 +71,6 @@ export interface WeatherResponse {
   daily: DailyWeather[];
 }
 
-export interface RiskDriver {
-  // drivers are strings in the API
-}
-
 export interface RiskCurrent {
   heat_index_c: number;
   risk_level: RiskLevel;

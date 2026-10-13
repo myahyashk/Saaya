@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { X, AlertTriangle, ShieldCheck, MapPin } from 'lucide-react';
 import { useI18n } from '@/i18n/context';
 import { useNotifications } from '@/context/NotificationContext';
@@ -6,16 +6,20 @@ import { RiskBadge } from './RiskBadge';
 import { formatTimeRange } from '@/utils/risk';
 import { Link } from 'react-router-dom';
 
+type AlertButton =
+  | { label: string; to: string; icon: typeof ShieldCheck | typeof MapPin }
+  | { label: string; action: 'dismiss'; icon: typeof X };
+
 export function AlertModal() {
   const { t } = useI18n();
   const { showAlertModal, activeAlert, dismissAlert } = useNotifications();
   const dialogRef = useRef<HTMLDivElement>(null);
   const [focusedIndex, setFocusedIndex] = useState(0);
 
-  const buttons = activeAlert
+  const buttons: AlertButton[] = activeAlert
     ? [
-        { label: t('alert.viewGuidance'), to: '/dashboard/guidance', icon: ShieldCheck },
-        { label: t('alert.findCooling'), to: '/dashboard/cooling-map', icon: MapPin },
+        { label: t('alert.viewGuidance'), to: '/guidance', icon: ShieldCheck },
+        { label: t('alert.findCooling'), to: '/map', icon: MapPin },
         { label: t('alert.dismiss'), action: 'dismiss', icon: X },
       ]
     : [];
@@ -30,14 +34,18 @@ export function AlertModal() {
       }
       if (e.key === 'Tab') {
         e.preventDefault();
-        setFocusedIndex(prev => (prev + (e.shiftKey ? -1 : 1) + buttons.length) % buttons.length);
+        const focusable = dialogRef.current?.querySelectorAll<HTMLElement>('button:not([disabled]), a[href]');
+        if (!focusable?.length) return;
+        const currentIndex = Array.from(focusable).indexOf(document.activeElement as HTMLElement);
+        const nextIndex = (currentIndex + (e.shiftKey ? -1 : 1) + focusable.length) % focusable.length;
+        focusable[nextIndex].focus();
+        setFocusedIndex(nextIndex);
       }
     };
     document.addEventListener('keydown', handleKey);
     // Focus the dialog
     const timer = setTimeout(() => {
-      const btns = dialogRef.current?.querySelectorAll('button');
-      btns?.[0]?.focus();
+      dialogRef.current?.querySelector<HTMLElement>('[data-focus-index="0"]')?.focus();
     }, 50);
     return () => {
       document.removeEventListener('keydown', handleKey);
@@ -118,7 +126,7 @@ export function AlertModal() {
           <div className="flex flex-col gap-2 pt-2">
             {buttons.map((btn, i) => {
               const Icon = btn.icon;
-              if (btn.action === 'dismiss') {
+              if (!('to' in btn)) {
                 return (
                   <button
                     key={i}

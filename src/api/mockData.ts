@@ -3,13 +3,11 @@ import type {
   RiskResponse,
   GuidanceResponse,
   NotificationsResponse,
-  ResourcesResponse,
   CitiesRiskResponse,
   MethodologyResponse,
   LocationsResponse,
   HealthResponse,
   Lang,
-  ResourceType,
 } from '@/types/api';
 
 const now = new Date('2026-06-12T06:00:00+05:00');

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react';
-import type { Lang, LocationItem } from '@/types/api';
+import type { LocationItem } from '@/types/api';
 import { api } from '@/api/client';
 import { resolveLocation, requestGeolocation, getDefaultCity, findCityById, type ResolvedLocation } from '@/utils/location';
 

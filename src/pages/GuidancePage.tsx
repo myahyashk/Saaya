@@ -41,16 +41,12 @@ export default function GuidancePage() {
   if (error) return <div className="space-y-6"><h1 className="text-2xl font-bold">{t('guidance.title')}</h1><ErrorState message={error} onRetry={refetch} /></div>;
   if (!guidance || guidance.items.length === 0) return <div className="space-y-6"><h1 className="text-2xl font-bold">{t('guidance.title')}</h1><EmptyState /></div>;
 
-  const grouped: Record<Audience, typeof guidance.items> = {
+  const allAudiences: Record<Audience, typeof guidance.items> = {
     everyone: [],
     outdoor_workers: [],
-    older_ads: [],
+    older_adults: [],
     children: [],
-  } as any;
-
-  // Properly initialize all audiences
-  const allAudiences: Record<string, typeof guidance.items> = {};
-  for (const aud of audienceOrder) allAudiences[aud] = [];
+  };
   for (const item of guidance.items) {
     if (allAudiences[item.audience]) allAudiences[item.audience].push(item);
   }

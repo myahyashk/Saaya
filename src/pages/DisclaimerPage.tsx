@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
-import { Logo } from '@/components/Logo';
 import { DisclaimerBanner } from '@/components/Disclaimer';
 import { useI18n } from '@/i18n/context';
 
@@ -8,18 +7,13 @@ export default function DisclaimerPage() {
   const { t } = useI18n();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-[#0F1B3D] px-4 py-4">
-        <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <Logo className="text-white" />
-          <Link to="/" className="text-white/70 hover:text-white flex items-center gap-1 text-sm">
-            <ArrowLeft size={16} /> {t('common.back')}
-          </Link>
-        </div>
-      </header>
-
-      <main className="max-w-3xl mx-auto px-4 py-8 space-y-6">
+    <div className="mx-auto max-w-3xl space-y-6">
+      <div className="flex items-center justify-between gap-4">
         <h1 className="text-3xl font-bold text-gray-900">{t('disclaimer.title')}</h1>
+        <Link to="/overview" className="inline-link">
+          <ArrowLeft size={16} /> {t('common.back')}
+        </Link>
+      </div>
 
         <DisclaimerBanner />
 
@@ -69,13 +63,6 @@ export default function DisclaimerPage() {
           </p>
         </div>
 
-        <Link
-          to="/dashboard"
-          className="inline-flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors"
-        >
-          {t('app.openDashboard')}
-        </Link>
-      </main>
     </div>
   );
 }

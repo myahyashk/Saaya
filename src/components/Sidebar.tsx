@@ -1,5 +1,5 @@
 import { NavLink, Link } from 'react-router-dom';
-import { LayoutDashboard, CloudSun, ThermometerSun, ShieldCheck, Bell, MapPinned, Info, MapPin, Languages } from 'lucide-react';
+import { House, LayoutDashboard, CloudSun, ThermometerSun, ShieldCheck, Bell, MapPinned, Info, MapPin, Languages } from 'lucide-react';
 import { Logo } from './Logo';
 import { useI18n } from '@/i18n/context';
 import { useLocationCtx } from '@/context/LocationContext';
@@ -12,86 +12,84 @@ import type { TranslationKey } from '@/i18n/translations';
 interface NavItem {
   to: string;
   icon: typeof LayoutDashboard;
-  labelKey: TranslationKey;
+  labelKey: TranslationKey | 'Home';
 }
 
 const navItems: NavItem[] = [
-  { to: '/dashboard', icon: LayoutDashboard, labelKey: 'nav.overview' },
-  { to: '/dashboard/weather', icon: CloudSun, labelKey: 'nav.weather' },
-  { to: '/dashboard/heat-risk', icon: ThermometerSun, labelKey: 'nav.risk' },
-  { to: '/dashboard/guidance', icon: ShieldCheck, labelKey: 'nav.guidance' },
-  { to: '/dashboard/notifications', icon: Bell, labelKey: 'nav.notifications' },
-  { to: '/dashboard/cooling-map', icon: MapPinned, labelKey: 'nav.coolingMap' },
+  { to: '/', icon: House, labelKey: 'Home' },
+  { to: '/overview', icon: LayoutDashboard, labelKey: 'nav.overview' },
+  { to: '/weather', icon: CloudSun, labelKey: 'nav.weather' },
+  { to: '/risk', icon: ThermometerSun, labelKey: 'nav.risk' },
+  { to: '/guidance', icon: ShieldCheck, labelKey: 'nav.guidance' },
+  { to: '/notifications', icon: Bell, labelKey: 'nav.notifications' },
+  { to: '/map', icon: MapPinned, labelKey: 'nav.coolingMap' },
 ];
 
-export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const { t } = useI18n();
+interface SidebarProps {
+  open: boolean;
+  collapsed: boolean;
+  onClose: () => void;
+  onExpand: () => void;
+}
+
+export function Sidebar({ open, collapsed, onClose, onExpand }: SidebarProps) {
+  const { t, dir } = useI18n();
   const { location } = useLocationCtx();
   const { unreadIds } = useNotifications();
   const { extremeMode, setExtremeMode } = useDemo();
   const demoAvailable = isDemoAvailable();
+  const hiddenDrawerPosition = dir === 'rtl' ? 'translate-x-full' : '-translate-x-full';
 
   return (
     <>
-      {/* Mobile overlay */}
       {open && (
         <div
-          className="fixed inset-0 bg-black/50 z-[60] md:hidden"
+          className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm lg:hidden"
           onClick={onClose}
           aria-hidden="true"
         />
       )}
 
       <aside
-        className={`fixed md:sticky top-0 left-0 h-screen w-72 bg-[#0F1B3D] text-white flex flex-col z-[70] transition-transform duration-300 ${
-          open ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
-        } sidebar-scroll overflow-y-auto`}
+        className={`saaya-sidebar fixed inset-y-0 z-[70] flex w-[288px] flex-col overflow-y-auto sidebar-scroll transition-[width,transform] duration-300 lg:sticky lg:top-0 lg:h-screen ${dir === 'rtl' ? 'right-0' : 'left-0'} ${open ? 'translate-x-0' : `${hiddenDrawerPosition} lg:translate-x-0`} ${collapsed ? 'lg:w-[84px]' : 'lg:w-[272px]'}`}
         aria-label="Sidebar navigation"
       >
-        {/* Logo */}
-        <div className="flex items-center justify-between px-5 py-5 border-b border-white/10">
-          <Link to="/" onClick={onClose}>
-            <Logo className="text-white" />
+        <div className={`flex min-h-[76px] items-center border-b border-white/10 ${collapsed ? 'justify-center px-3' : 'justify-between px-5'}`}>
+          <Link to="/" onClick={onClose} aria-label="Saaya home">
+            <Logo className="text-white" showText={!collapsed} />
           </Link>
           <button
             onClick={onClose}
-            className="md:hidden text-white/70 hover:text-white p-1"
+            className="icon-button text-white lg:hidden"
             aria-label={t('common.close')}
           >
             <X size={20} />
           </button>
         </div>
 
-        {/* Active location */}
-        <div className="px-5 py-3 border-b border-white/10">
-          <div className="flex items-center gap-2 text-white/60 text-xs">
-            <MapPin size={14} />
-            {t('location.activeLocation')}
-          </div>
-          <p className="text-sm font-semibold mt-0.5">{location.name}</p>
-        </div>
-
-        {/* Nav */}
-        <nav className="flex-1 px-3 py-4 space-y-1" aria-label="Main navigation">
+        <nav className="flex-1 space-y-1 px-3 py-4" aria-label="Main navigation">
           {navItems.map(item => {
             const Icon = item.icon;
-            const isActive = item.to === '/dashboard/notifications';
+            const isNotifications = item.to === '/notifications';
+            const label = item.labelKey === 'Home' ? 'Home' : t(item.labelKey);
             return (
               <NavLink
                 key={item.to}
                 to={item.to}
-                end={item.to === '/dashboard'}
+                end
                 onClick={onClose}
+                title={collapsed ? label : undefined}
+                aria-label={label}
                 className={({ isActive: active }) =>
-                  `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    active ? 'bg-blue-600 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white'
+                  `sidebar-link ${collapsed ? 'justify-center px-0' : ''} ${
+                    active ? 'sidebar-link-active' : ''
                   }`
                 }
               >
-                <Icon size={20} aria-hidden="true" />
-                <span className="flex-1">{t(item.labelKey)}</span>
-                {isActive && unreadIds.length > 0 && (
-                  <span className="bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center">
+                <Icon size={19} aria-hidden="true" />
+                {!collapsed && <span className="flex-1">{label}</span>}
+                {isNotifications && unreadIds.length > 0 && (
+                  <span className={`unread-badge ${collapsed ? 'absolute -right-1 -top-1' : ''}`}>
                     {unreadIds.length}
                   </span>
                 )}
@@ -100,16 +98,16 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
           })}
         </nav>
 
-        {/* Bottom controls */}
-        <div className="px-3 py-4 border-t border-white/10 space-y-3">
+        <div className="space-y-3 border-t border-white/10 px-3 py-4">
           {demoAvailable && (
-            <label className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 cursor-pointer hover:bg-white/10 transition-colors">
+            <div className={`flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 ${collapsed ? 'justify-center' : ''}`}>
               <button
                 type="button"
                 role="switch"
                 aria-checked={extremeMode}
+                title={collapsed ? t('demo.extremeMode') : undefined}
                 onClick={() => setExtremeMode(!extremeMode)}
-                className={`relative w-9 h-5 rounded-full transition-colors ${extremeMode ? 'bg-red-500' : 'bg-white/20'}`}
+                className={`relative h-5 w-9 flex-shrink-0 rounded-full transition-colors ${extremeMode ? 'bg-red-500' : 'bg-white/20'}`}
               >
                 <span
                   className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
@@ -117,23 +115,45 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
                   }`}
                 />
               </button>
-              <span className="text-xs text-white/80 flex items-center gap-1">
+              {!collapsed && <span className="flex items-center gap-1 text-xs text-slate-300">
                 <Flame size={14} className="text-orange-400" />
                 {t('demo.extremeMode')}
-              </span>
-            </label>
+              </span>}
+            </div>
           )}
 
-          <LocationToggle />
-          <LanguageSwitcher />
+          {collapsed ? (
+            <div className="flex flex-col items-center gap-2">
+              <button className="icon-button text-slate-300" onClick={onExpand} title={location.name} aria-label={`${t('location.activeLocation')}: ${location.name}`}>
+                <MapPin size={18} />
+              </button>
+              <button className="icon-button text-slate-300" onClick={onExpand} title={t('language.label')} aria-label={t('language.label')}>
+                <Languages size={18} />
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="px-2 pb-1">
+                <div className="flex items-center gap-2 text-xs text-slate-400">
+                  <MapPin size={14} />
+                  {t('location.activeLocation')}
+                </div>
+                <p className="mt-1 truncate ps-5 text-sm font-semibold text-slate-100">{location.name}</p>
+              </div>
+              <LocationToggle />
+              <LanguageSwitcher />
+            </>
+          )}
 
           <Link
             to="/disclaimer"
             onClick={onClose}
-            className="flex items-center gap-2 px-3 py-2 text-xs text-white/50 hover:text-white/80 transition-colors"
+            title={collapsed ? t('sidebar.disclaimer') : undefined}
+            aria-label={t('sidebar.disclaimer')}
+            className={`sidebar-disclaimer ${collapsed ? 'justify-center px-0' : ''}`}
           >
             <Info size={16} />
-            {t('sidebar.disclaimer')}
+            {!collapsed && t('sidebar.disclaimer')}
           </Link>
         </div>
       </aside>
@@ -151,16 +171,16 @@ export function LanguageSwitcher() {
 
   return (
     <div className="px-1">
-      <div className="flex items-center gap-1.5 text-white/60 text-xs mb-1.5">
+      <div className="mb-2 flex items-center gap-1.5 text-xs text-slate-400">
         <Languages size={14} />
         {t('language.label')}
       </div>
-      <div className="flex gap-1 bg-white/5 rounded-lg p-1">
+      <div className="flex gap-1 rounded-xl bg-white/5 p-1">
         {langs.map(l => (
           <button
             key={l.code}
             onClick={() => setLang(l.code)}
-            className={`flex-1 py-1.5 rounded-md text-xs font-medium transition-colors ${
+            className={`min-h-9 flex-1 rounded-lg text-xs font-medium transition-colors ${
               lang === l.code ? 'bg-blue-600 text-white' : 'text-white/60 hover:text-white'
             }`}
             aria-pressed={lang === l.code}

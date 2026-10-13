@@ -1,13 +1,10 @@
 export function Logo({ className = '', showText = true }: { className?: string; showText?: boolean }) {
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        {/* Sun */}
-        <circle cx="11" cy="11" r="5" fill="#FBBF24" />
-        {/* Shade/umbrella */}
-        <path d="M16 14 C16 9, 20 6, 25 6 C27 6, 28 8, 28 11 L28 14 Z" fill="#2563EB" />
-        <path d="M22 14 L22 26" stroke="#1E3A8A" strokeWidth="2" stroke-linecap="round" />
-        <path d="M18 26 Q22 23, 26 26" fill="none" stroke="#1E3A8A" strokeWidth="2" stroke-linecap="round" />
+      <svg width="40" height="32" viewBox="0 0 40 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="20" cy="13" r="10" fill="#FF8A18" />
+        <path d="M1 30C5.6 18.3 12.4 12.5 20 12.5S34.4 18.3 39 30C32.8 23 26.7 19.5 20 19.5S7.2 23 1 30Z" fill="#1685E5" />
+        <path d="M3 29C9.2 24.1 14.8 21.8 20 21.8S30.8 24.1 37 29C30.2 26.5 25.1 25.5 20 25.5S9.8 26.5 3 29Z" fill="#073D7A" />
       </svg>
       {showText && (
         <span className="text-xl font-bold tracking-tight" style={{ fontFamily: 'var(--font-latin)' }}>

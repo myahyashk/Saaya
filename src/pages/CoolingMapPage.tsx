@@ -1,18 +1,20 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import MarkerClusterGroup from 'react-leaflet-cluster';
+import 'react-leaflet-cluster/dist/assets/MarkerCluster.css';
+import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
 import L from 'leaflet';
-import { Search, MapPin, Navigation, Snowflake, Droplets, HeartHandshake, AlertCircle } from 'lucide-react';
+import { Search, MapPin, Navigation, Snowflake, Droplets, HeartHandshake } from 'lucide-react';
 import { useI18n } from '@/i18n/context';
 import { useResources, useCityRisk } from '@/hooks/useData';
 import { useLocationCtx } from '@/context/LocationContext';
 import { LoadingState, ErrorState, EmptyState } from '@/components/States';
-import { RiskDot } from '@/components/RiskBadge';
 import { haversine } from '@/api/client';
 import type { ResourceItem, ResourceType } from '@/types/api';
 import type { TranslationKey } from '@/i18n/translations';
 
 // Fix leaflet default icon
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+delete (L.Icon.Default.prototype as unknown as { _getIconUrl?: string })._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
   iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
@@ -75,7 +77,7 @@ export default function CoolingMapPage() {
   const { t } = useI18n();
   const { location } = useLocationCtx();
   const [search, setSearch] = useState('');
-  const [typeFilter, setTypeFilter] = useState<string>('');
+  const [typeFilter, setTypeFilter] = useState<ResourceType | ''>('');
   const [provinceFilter, setProvinceFilter] = useState<string>('');
   const [bbox, setBbox] = useState<string>('');
   const [nearbyList, setNearbyList] = useState<ResourceItem[] | null>(null);
@@ -140,7 +142,7 @@ export default function CoolingMapPage() {
         </div>
         <select
           value={typeFilter}
-          onChange={e => setTypeFilter(e.target.value)}
+          onChange={e => setTypeFilter(e.target.value as ResourceType | '')}
           className="rounded-lg border border-gray-200 px-3 py-2.5 text-sm focus:border-blue-400 outline-none"
           aria-label={t('map.filterType')}
         >
@@ -169,8 +171,9 @@ export default function CoolingMapPage() {
             scrollWheelZoom={true}
             style={{ height: '100%', width: '100%' }}
             ref={(m) => { if (m) mapRef.current = m; }}
-            whenReady={(e) => {
-              const map = e.target as L.Map;
+            whenReady={() => {
+              const map = mapRef.current;
+              if (!map) return;
               map.on('moveend', handleMapMove);
               handleMapMove();
             }}
@@ -181,41 +184,43 @@ export default function CoolingMapPage() {
             />
 
             {/* Resource markers */}
-            {!loading && resources?.items.map(item => (
-              <Marker
-                key={item.id}
-                position={[item.lat, item.lon]}
-                icon={createTypeIcon(item.type)}
-              >
-                <Popup>
-                  <div className="min-w-[200px] space-y-1">
-                    <p className="font-semibold text-sm">{item.name}</p>
-                    <p className="text-xs text-gray-500 capitalize">{item.type.replace('_', ' ')}</p>
-                    <p className="text-xs">{item.address}</p>
-                    <p className="text-xs text-gray-500">{item.hours}</p>
-                    {item.contact && item.contact !== 'N/A' && <p className="text-xs">{item.contact}</p>}
-                    {item.notes && <p className="text-xs text-gray-400 italic">{item.notes}</p>}
-                    {item.distance_km != null && (
-                      <p className="text-xs text-blue-600 font-medium">{item.distance_km} km</p>
-                    )}
-                    {!item.verified && (
-                      <p className="text-xs text-amber-700 bg-amber-50 rounded px-2 py-1 mt-1">
-                        {t('common.sampleData')} — {t('common.verifyBeforeVisit')}
-                      </p>
-                    )}
-                    <a
-                      href={`https://www.openstreetmap.org/directions?from=&to=${item.lat}%2C${item.lon}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium mt-1"
-                    >
-                      <Navigation size={12} />
-                      {t('common.getDirections')}
-                    </a>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
+            <MarkerClusterGroup chunkedLoading>
+              {!loading && resources?.items.map(item => (
+                <Marker
+                  key={item.id}
+                  position={[item.lat, item.lon]}
+                  icon={createTypeIcon(item.type)}
+                >
+                  <Popup>
+                    <div className="min-w-[200px] space-y-1">
+                      <p className="font-semibold text-sm">{item.name}</p>
+                      <p className="text-xs text-gray-500 capitalize">{item.type.replace('_', ' ')}</p>
+                      <p className="text-xs">{item.address}</p>
+                      <p className="text-xs text-gray-500">{item.hours}</p>
+                      {item.contact && item.contact !== 'N/A' && <p className="text-xs">{item.contact}</p>}
+                      {item.notes && <p className="text-xs text-gray-400 italic">{item.notes}</p>}
+                      {item.distance_km != null && (
+                        <p className="text-xs text-blue-600 font-medium">{item.distance_km} km</p>
+                      )}
+                      {!item.verified && (
+                        <p className="text-xs text-amber-700 bg-amber-50 rounded px-2 py-1 mt-1">
+                          {t('common.sampleData')} — {t('common.verifyBeforeVisit')}
+                        </p>
+                      )}
+                      <a
+                        href={`https://www.openstreetmap.org/directions?from=&to=${item.lat}%2C${item.lon}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium mt-1"
+                      >
+                        <Navigation size={12} />
+                        {t('common.getDirections')}
+                      </a>
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+            </MarkerClusterGroup>
 
             {/* City risk markers (optional) */}
             {cityRisk?.items.map(city => (

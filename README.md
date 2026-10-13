@@ -2,7 +2,20 @@
 
 A front-end for **Saaya** (Urdu/Sindhi for "shade"), built for OpenHack'26, Challenge CL-02 (Health track).
 
-Saaya uses weather data and a heat-risk indicator to communicate danger levels and connect residents with cooling centers, water points, and community assistance — across Pakistan, in three languages.
+## Problem
+Pakistan is increasingly exposed to severe heatwaves, but many residents do not have a clear, localized, and timely view of current risk, forecast conditions, and nearby cooling resources. This creates uncertainty around when to take precautions, where to seek relief, and which guidance is most relevant.
+
+## Solution
+Saaya turns weather, heat-risk, and community resource data into one simple dashboard that helps people understand danger levels, act early, and find safe places to cool down. It delivers the information in English, Urdu, and Sindhi so communities can respond quickly with better awareness and safer decisions.
+
+## Features
+- Live heat-risk and weather overview for a selected location
+- Current and upcoming risk windows with clear severity indicators
+- Safety guidance tailored to different audiences and risk levels
+- Nearby cooling centers and community support resources on an interactive map
+- Notification system for urgent alerts and heat-risk escalation
+- Multi-language support with English, Urdu, and Sindhi
+- Mock mode for offline demos and real API mode for production integration
 
 ## Quick start
 

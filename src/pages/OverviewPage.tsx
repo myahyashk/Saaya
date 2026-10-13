@@ -4,11 +4,9 @@ import { useI18n } from '@/i18n/context';
 import { useWeather, useRisk, useGuidance, useResources } from '@/hooks/useData';
 import { RiskBadge } from '@/components/RiskBadge';
 import { LoadingState, ErrorState, EmptyState } from '@/components/States';
-import { riskColor, isElevated, formatTimeRange, formatHour } from '@/utils/risk';
-import { haversine } from '@/api/client';
+import { riskColor, formatTimeRange } from '@/utils/risk';
 import type { GuidanceIcon } from '@/types/api';
 import { Droplets as WaterIcon, Umbrella as ShadeIcon, Clock as ClockIcon, Shirt as ClothingIcon, Sun as SunIcon, AlertTriangle as AlertIcon } from 'lucide-react';
-import type { TranslationKey } from '@/i18n/translations';
 
 const guidanceIconMap: Record<GuidanceIcon, typeof WaterIcon> = {
   water: WaterIcon,
@@ -19,21 +17,12 @@ const guidanceIconMap: Record<GuidanceIcon, typeof WaterIcon> = {
   alert: AlertIcon,
 };
 
-const audienceLabel: Record<string, TranslationKey> = {
-  everyone: 'guidance.everyone',
-  outdoor_workers: 'guidance.outdoorWorkers',
-  older_adults: 'guidance.olderAdults',
-  children: 'guidance.children',
-};
-
 export default function OverviewPage() {
   const { t } = useI18n();
   const { data: weather, loading: wLoading, error: wError } = useWeather();
   const { data: risk, loading: rLoading, error: rError } = useRisk();
   const { data: guidance, loading: gLoading, error: gError } = useGuidance();
   const { data: resources } = useResources({ limit: 3 });
-  const { location } = useLocationCtxSafe();
-
   const nextElevated = risk?.elevated_periods?.[0] ?? null;
   const topGuidance = guidance?.items?.slice(0, 3) ?? [];
 
@@ -71,7 +60,7 @@ export default function OverviewPage() {
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-gray-900">{t('overview.currentWeather')}</h2>
-            <Link to="/dashboard/weather" className="text-blue-600 text-sm flex items-center gap-1 hover:text-blue-700">
+            <Link to="/weather" className="text-blue-600 text-sm flex items-center gap-1 hover:text-blue-700">
               {t('common.viewAll')} <ArrowRight size={14} />
             </Link>
           </div>
@@ -108,7 +97,7 @@ export default function OverviewPage() {
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-gray-900">{t('risk.nextElevated')}</h2>
-            <Link to="/dashboard/heat-risk" className="text-blue-600 text-sm flex items-center gap-1 hover:text-blue-700">
+            <Link to="/risk" className="text-blue-600 text-sm flex items-center gap-1 hover:text-blue-700">
               {t('common.viewAll')} <ArrowRight size={14} />
             </Link>
           </div>
@@ -140,7 +129,7 @@ export default function OverviewPage() {
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-gray-900">{t('overview.topGuidance')}</h2>
-            <Link to="/dashboard/guidance" className="text-blue-600 text-sm flex items-center gap-1 hover:text-blue-700">
+            <Link to="/guidance" className="text-blue-600 text-sm flex items-center gap-1 hover:text-blue-700">
               {t('common.viewAll')} <ArrowRight size={14} />
             </Link>
           </div>
@@ -168,7 +157,7 @@ export default function OverviewPage() {
         <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold text-gray-900">{t('overview.nearestCooling')}</h2>
-            <Link to="/dashboard/cooling-map" className="text-blue-600 text-sm flex items-center gap-1 hover:text-blue-700">
+            <Link to="/map" className="text-blue-600 text-sm flex items-center gap-1 hover:text-blue-700">
               {t('common.viewAll')} <ArrowRight size={14} />
             </Link>
           </div>
@@ -194,10 +183,4 @@ export default function OverviewPage() {
       </div>
     </div>
   );
-}
-
-// Safe hook usage for location
-import { useLocationCtx } from '@/context/LocationContext';
-function useLocationCtxSafe() {
-  return useLocationCtx();
 }

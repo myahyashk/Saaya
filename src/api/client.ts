@@ -44,7 +44,7 @@ async function apiFetch<T>(path: string, query: Record<string, string | number |
   return res.json() as Promise<T>;
 }
 
-function useExtremeScenario(params?: { scenario?: 'extreme' }): boolean {
+function isExtremeScenario(params?: { scenario?: 'extreme' }): boolean {
   return DEMO && params?.scenario === 'extreme';
 }
 
@@ -60,7 +60,7 @@ export const api = {
   },
 
   weather(p: LocationParams): Promise<WeatherResponse> {
-    const extreme = useExtremeScenario({ scenario: p.scenario });
+    const extreme = isExtremeScenario({ scenario: p.scenario });
     if (USE_MOCK || extreme) return Promise.resolve(mockData.weather(extreme || DEMO && p.scenario === 'extreme'));
     const q: Record<string, string | number | boolean | undefined> = {
       lat: p.lat, lon: p.lon, lang: p.lang,

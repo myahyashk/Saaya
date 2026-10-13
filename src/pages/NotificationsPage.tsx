@@ -1,4 +1,4 @@
-import { Bell, Check, AlertTriangle, Info, AlertCircle } from 'lucide-react';
+import { Check, AlertTriangle, Info, AlertCircle } from 'lucide-react';
 import { useI18n } from '@/i18n/context';
 import { useNotifications } from '@/context/NotificationContext';
 import { LoadingState, ErrorState, EmptyState } from '@/components/States';
@@ -15,6 +15,10 @@ const severityIcon: Record<NotificationSeverity, typeof Info> = {
 export default function NotificationsPage() {
   const { t } = useI18n();
   const { data, loading, error, unreadIds, markRead, markAllRead, refresh } = useNotifications();
+  const notifications = data
+    ? [...data.items, ...(data.active_alert && !data.items.some(item => item.id === data.active_alert?.id) ? [data.active_alert] : [])]
+      .sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at))
+    : [];
 
   return (
     <div className="space-y-6">
@@ -38,13 +42,13 @@ export default function NotificationsPage() {
         </div>
       </div>
 
-      {loading ? <LoadingState /> : error ? <ErrorState message={error} onRetry={refresh} /> : !data || data.items.length === 0 ? (
+      {loading ? <LoadingState /> : error ? <ErrorState message={error} onRetry={refresh} /> : notifications.length === 0 ? (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <EmptyState label={t('notifications.empty')} />
         </div>
       ) : (
         <ul className="space-y-3">
-          {data.items.map(item => {
+          {notifications.map(item => {
             const isUnread = unreadIds.includes(item.id);
             const Icon = severityIcon[item.severity];
             return (

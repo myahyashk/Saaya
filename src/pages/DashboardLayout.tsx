@@ -1,24 +1,35 @@
-import { Outlet, useNavigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { Outlet } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Sidebar } from '@/components/Sidebar';
 import { Header } from '@/components/Header';
 import { FooterDisclaimer } from '@/components/Disclaimer';
+import { useI18n } from '@/i18n/context';
 
 export default function DashboardLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const navigate = useNavigate();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { pathname } = useLocation();
+  const { dir } = useI18n();
 
-  // Close sidebar on route change (mobile)
-  useEffect(() => {
-    return () => setSidebarOpen(false);
-  }, []);
+  useEffect(() => setSidebarOpen(false), [pathname]);
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <Sidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      <div className="flex-1 flex flex-col min-w-0">
-        <Header onMenuClick={() => setSidebarOpen(true)} />
-        <main className="flex-1 p-4 md:p-6 max-w-6xl mx-auto w-full">
+    <div className="saaya-shell flex min-h-screen" dir={dir}>
+      <a className="skip-link" href="#main-content">Skip to content</a>
+      <Sidebar
+        open={sidebarOpen}
+        collapsed={sidebarCollapsed}
+        onClose={() => setSidebarOpen(false)}
+        onExpand={() => setSidebarCollapsed(false)}
+      />
+      <div className="saaya-workspace flex min-h-screen min-w-0 flex-1 flex-col">
+        <Header
+          onMenuClick={() => setSidebarOpen(true)}
+          onToggleSidebar={() => setSidebarCollapsed(value => !value)}
+          sidebarCollapsed={sidebarCollapsed}
+        />
+        <main id="main-content" className="saaya-content mx-auto w-full max-w-[1440px] flex-1 px-4 py-6 md:px-8 md:py-8">
           <Outlet />
         </main>
         <FooterDisclaimer />

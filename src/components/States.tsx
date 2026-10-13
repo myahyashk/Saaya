@@ -1,12 +1,13 @@
-import { Loader2, AlertCircle, Inbox } from 'lucide-react';
+import { AlertCircle, Inbox } from 'lucide-react';
 import { useI18n } from '@/i18n/context';
 
 export function LoadingState({ label }: { label?: string }) {
   const { t } = useI18n();
   return (
-    <div className="flex flex-col items-center justify-center py-12 text-gray-400" role="status" aria-live="polite">
-      <Loader2 className="animate-spin mb-3" size={32} />
-      <p className="text-sm">{label ?? t('common.loading')}</p>
+    <div className="loading-state" role="status" aria-label={label ?? t('common.loading')} aria-live="polite">
+      <span className="skeleton h-4 w-2/5" />
+      <span className="skeleton h-4 w-3/4" />
+      <span className="skeleton h-4 w-1/2" />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '@/api/client';
-import type { WeatherResponse, RiskResponse, GuidanceResponse, MethodologyResponse, ResourcesResponse, CitiesRiskResponse } from '@/types/api';
+import type { WeatherResponse, RiskResponse, GuidanceResponse, MethodologyResponse, ResourcesResponse, CitiesRiskResponse, ResourceType } from '@/types/api';
 import { useLocationCtx } from '@/context/LocationContext';
 import { useI18n } from '@/i18n/context';
 import { useDemo } from '@/context/DemoContext';
@@ -94,7 +94,7 @@ export function useMethodology(): DataState<MethodologyResponse> {
 }
 
 export function useResources(params: {
-  type?: string; province?: string; q?: string; bbox?: string; limit?: number;
+  type?: ResourceType; province?: string; q?: string; bbox?: string; limit?: number;
 }): DataState<ResourcesResponse> {
   const { location } = useLocationCtx();
   const { type, province, q, bbox, limit } = params;
@@ -108,7 +108,7 @@ export function useResources(params: {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    api.resources({ lat: location.lat, lon: location.lon, type: type as any, province, q, bbox, limit })
+    api.resources({ lat: location.lat, lon: location.lon, type, province, q, bbox, limit })
       .then(res => { if (!cancelled) { setData(res); setLoading(false); } })
       .catch(err => { if (!cancelled) { setError(err instanceof Error ? err.message : 'Failed'); setLoading(false); } });
     return () => { cancelled = true; };

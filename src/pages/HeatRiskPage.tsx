@@ -5,7 +5,7 @@ import { RiskBadge } from '@/components/RiskBadge';
 import { LoadingState, ErrorState, EmptyState } from '@/components/States';
 import { riskColor, isElevated, formatTimeRange, formatHour } from '@/utils/risk';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceArea, Cell,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
 } from 'recharts';
 import { ExternalLink } from 'lucide-react';
 
@@ -67,7 +67,7 @@ export default function HeatRiskPage() {
       </section>
 
       {/* Hourly risk timeline */}
-      <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+      <section id="methodology" className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 scroll-mt-24">
         <h2 className="font-semibold text-gray-900 mb-4">{t('risk.timeline')}</h2>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
@@ -78,7 +78,7 @@ export default function HeatRiskPage() {
               <Tooltip
                 contentStyle={{ borderRadius: '8px', border: '1px solid #e5e7eb', fontSize: '12px' }}
                 labelStyle={{ color: '#374151' }}
-                formatter={(value: number) => [`${value}°C`, t('risk.heatIndex')]}
+                formatter={(value) => [`${Number(value ?? 0)}°C`, t('risk.heatIndex')]}
               />
               <Bar dataKey="heatIndex" radius={[3, 3, 0, 0]}>
                 {chartData.map((entry, index) => (

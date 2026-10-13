@@ -66,7 +66,7 @@ export function formatTimeRange(start: string, end: string): string {
     const s = new Date(start);
     const e = new Date(end);
     const fmt = (d: Date) =>
-      d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+      d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Karachi' });
     return `${fmt(s)} to ${fmt(e)}`;
   } catch {
     return `${start} to ${end}`;
@@ -75,7 +75,7 @@ export function formatTimeRange(start: string, end: string): string {
 
 export function formatHour(iso: string): string {
   try {
-    return new Date(iso).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+    return new Date(iso).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'Asia/Karachi' });
   } catch {
     return iso;
   }

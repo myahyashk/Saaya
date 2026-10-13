@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { RiskLevel, NotificationItem } from '@/types/api';
+import type { NotificationItem } from '@/types/api';
 import { isElevated, shouldShowAlertModal, isAlertDismissed, markAlertDismissed, dedupeKey, formatTimeRange } from '@/utils/risk';
 import { resolveLocation, getDefaultCity, findCityById } from '@/utils/location';
 import type { CityOption } from '@/utils/location';

@@ -23,15 +23,15 @@ export default function App() {
           <NotificationProvider>
             <BrowserRouter>
               <Routes>
-                <Route path="/" element={<LandingPage />} />
-                <Route path="/disclaimer" element={<DisclaimerPage />} />
-                <Route path="/dashboard" element={<DashboardLayout />}>
-                  <Route index element={<OverviewPage />} />
+                <Route path="/" element={<DashboardLayout />}>
+                  <Route index element={<LandingPage />} />
+                  <Route path="overview" element={<OverviewPage />} />
                   <Route path="weather" element={<WeatherPage />} />
-                  <Route path="heat-risk" element={<HeatRiskPage />} />
+                  <Route path="risk" element={<HeatRiskPage />} />
                   <Route path="guidance" element={<GuidancePage />} />
                   <Route path="notifications" element={<NotificationsPage />} />
-                  <Route path="cooling-map" element={<CoolingMapPage />} />
+                  <Route path="map" element={<CoolingMapPage />} />
+                  <Route path="disclaimer" element={<DisclaimerPage />} />
                 </Route>
               </Routes>
               <AlertModal />

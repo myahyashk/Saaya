@@ -4,6 +4,7 @@ import { api } from '@/api/client';
 import { useLocationCtx } from './LocationContext';
 import { useI18n } from '@/i18n/context';
 import { useDemo } from './DemoContext';
+import { toastFromNotification } from '@/components/Toast';
 import {
   shouldShowAlertModal,
   loadDismissedAlerts,
@@ -28,6 +29,7 @@ interface NotificationContextValue {
 const NotificationContext = createContext<NotificationContextValue | null>(null);
 
 const READ_KEY = 'saaya-read-notifications';
+const TOASTED_KEY = 'saaya-toasted-notifications';
 const POLL_INTERVAL = 5 * 60 * 1000;
 
 export function NotificationProvider({ children }: { children: ReactNode }) {
@@ -56,6 +58,21 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       });
       setData(res);
 
+      let toastedIds: string[] = [];
+      try { toastedIds = JSON.parse(localStorage.getItem(TOASTED_KEY) || '[]'); } catch { /* ignore invalid stored data */ }
+      const incomingItems = [...res.items, ...(res.active_alert ? [res.active_alert] : [])];
+      const uniqueItems = incomingItems.filter((item, index) => incomingItems.findIndex(candidate => candidate.id === item.id) === index);
+      const newItems = uniqueItems.filter(item => !toastedIds.includes(item.id));
+      newItems.forEach(item => {
+        toastFromNotification(item);
+        if (item.type === 'alert' && 'Notification' in window && Notification.permission === 'granted') {
+          try { new Notification(item.title, { body: item.body }); } catch { /* ignore browser notification errors */ }
+        }
+      });
+      if (newItems.length > 0) {
+        try { localStorage.setItem(TOASTED_KEY, JSON.stringify([...toastedIds, ...newItems.map(item => item.id)])); } catch { /* ignore storage errors */ }
+      }
+
       // Handle alert modal
       if (shouldShowAlertModal(res.active_alert)) {
         const alertId = res.active_alert!.id;
@@ -63,12 +80,6 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
           if (lastAlertIdRef.current !== alertId) {
             setShowAlertModal(true);
             lastAlertIdRef.current = alertId;
-            // Try browser notification
-            if ('Notification' in window && Notification.permission === 'granted') {
-              try {
-                new Notification(res.active_alert!.title, { body: res.active_alert!.body });
-              } catch { /* ignore */ }
-            }
           }
         }
       } else {
