@@ -101,6 +101,14 @@ export type TranslationKey =
   | 'alert.findCooling'
   | 'alert.dismiss'
   | 'demo.extremeMode'
+  | 'footer.aboutTitle'
+  | 'footer.aboutText'
+  | 'footer.aboutBuild'
+  | 'footer.teamTitle'
+  | 'footer.teamFrontend'
+  | 'footer.teamBackend'
+  | 'footer.safetyTitle'
+  | 'footer.safetyText'
   | 'footer.disclaimer'
   | 'footer.officialSources'
   | 'common.back'
@@ -209,6 +217,14 @@ const en: TranslationDict = {
   'alert.findCooling': 'Find cooling centers near me',
   'alert.dismiss': 'Dismiss',
   'demo.extremeMode': 'Demo: simulate extreme heat day',
+  'footer.aboutTitle': 'About Saaya',
+  'footer.aboutText': 'Saaya is a heatwave safety intelligence system that helps communities track conditions, heat risk, and safer actions before danger escalates.',
+  'footer.aboutBuild': 'Built for OpenHack\'26, Health track, challenge CL-02',
+  'footer.teamTitle': 'Team',
+  'footer.teamFrontend': 'Frontend developers: Muhammad Yahya and Musawir Ali',
+  'footer.teamBackend': 'Backend developer: Sagheer Ahmed',
+  'footer.safetyTitle': 'Safety and official sources',
+  'footer.safetyText': 'Saaya is a prototype and not a substitute for official warnings or professional medical advice',
   'footer.disclaimer': 'Saaya is a community tool — not a substitute for official warnings or medical advice.',
   'footer.officialSources': 'Official sources',
   'common.back': 'Back',
@@ -317,6 +333,14 @@ const ur: TranslationDict = {
   'alert.findCooling': 'میرے پاس کولنگ سینٹر تلاش کریں',
   'alert.dismiss': 'مسترد کریں',
   'demo.extremeMode': 'ڈیمو: انتہائی گرمی کا دن simulate کریں',
+  'footer.aboutTitle': 'سایا کے بارے میں',
+  'footer.aboutText': 'سایا ایک ہیٹ ویو سیفٹی انٹیلیجنس سسٹم ہے جو کمیونٹیوں کو خطرے سے پہلے موسمی حالات، گرمی کے خطرے اور محفوظ اقدامات کو جاننے میں مدد دیتا ہے۔',
+  'footer.aboutBuild': 'OpenHack\'26، Health ٹریک، چیلنج CL-02 کے لیے بنایا گیا',
+  'footer.teamTitle': 'ٹیم',
+  'footer.teamFrontend': 'فرنٹ اینڈ ڈویلپرز: محمد یحییٰ اور موسی ر علی',
+  'footer.teamBackend': 'بیک اینڈ ڈویلپر: ساغر احمد',
+  'footer.safetyTitle': 'حفاظت اور سرکاری ذرائع',
+  'footer.safetyText': 'سایا ایک پروٹو ٹائپ ہے اور سرکاری وارننگز یا پیشہ ورانہ طبی مشورے کا متبادل نہیں ہے',
   'footer.disclaimer': 'سایا ایک کمیونٹی ٹول ہے — سرکاری وارننگز یا طبی مشورے کا متبادل نہیں۔',
   'footer.officialSources': 'سرکاری ذرائع',
   'common.back': 'واپس',
@@ -425,6 +449,14 @@ const sd: TranslationDict = {
   'alert.findCooling': 'منهنجي ويجهو کولنگ سينٽر ڳوليو',
   'alert.dismiss': 'رد ڪريو',
   'demo.extremeMode': 'ڊيمو: انتهايي گرمي جو ڏينهن simulate ڪريو',
+  'footer.aboutTitle': 'سايا بابت',
+  'footer.aboutText': 'سايا هڪ هيٽ ويڦو سيڪيٽي انٽيليجنس سسٽم آهي جنهن برادريون کي موسمي حالتن، گرمي جا خطرا، ۽ محفوظ عملن بابت خطرن کان پهريان ڄاچي مدد ڪري ٿو.',
+  'footer.aboutBuild': 'OpenHack\'26، Health ٽريڪ، چيلنج CL-02 لاء ٺھيو',
+  'footer.teamTitle': 'ٽيم',
+  'footer.teamFrontend': 'فرنٽ اينڊ ڊولپرز: محمد يحييٰ ۽ موسور علي',
+  'footer.teamBackend': 'بیک اينڊ ڊولپر: ساگر احمد',
+  'footer.safetyTitle': 'حفاظت ۽ سرڪاري ذريعا',
+  'footer.safetyText': 'سايا هڪ پروٽوٽائپ آهي ۽ سرڪاري تنبهن يا پيشه ور طبي مشوري جو متبادل ناهي',
   'footer.disclaimer': 'سايا هڪ برادري وارو اوزار آهي — سرڪاري تنبهن يا طبي مشوري جو متبادل ناهي.',
   'footer.officialSources': 'سرڪاري ذريعا',
   'common.back': 'واپس',

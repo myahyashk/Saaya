@@ -1,6 +1,7 @@
 import { useI18n } from '@/i18n/context';
 import { useGuidance } from '@/hooks/useData';
 import { RiskBadge } from '@/components/RiskBadge';
+import { PageHero } from '@/components/PageHero';
 import { LoadingState, ErrorState, EmptyState } from '@/components/States';
 import type { GuidanceIcon, Audience } from '@/types/api';
 import type { TranslationKey } from '@/i18n/translations';
@@ -52,11 +53,17 @@ export default function GuidancePage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <h1 className="text-2xl font-bold text-gray-900">{t('guidance.title')}</h1>
-        <RiskBadge level={guidance.risk_level} size="md" />
-      </div>
+    <div className="page-shell">
+      <PageHero
+        title={t('guidance.title')}
+        description={`${t('risk.currentLevel')}: ${guidance.risk_level}`}
+        status={t('risk.currentLevel')}
+        value={guidance.risk_level}
+        valueLabel={t('risk.currentLevel')}
+        riskLevel={guidance.risk_level}
+      >
+        <div className="mt-3"><RiskBadge level={guidance.risk_level} size="md" /></div>
+      </PageHero>
 
       {audienceOrder.map(audience => {
         const items = allAudiences[audience];

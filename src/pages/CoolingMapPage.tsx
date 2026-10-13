@@ -8,6 +8,7 @@ import { Search, MapPin, Navigation, Snowflake, Droplets, HeartHandshake } from 
 import { useI18n } from '@/i18n/context';
 import { useResources, useCityRisk } from '@/hooks/useData';
 import { useLocationCtx } from '@/context/LocationContext';
+import { PageHero } from '@/components/PageHero';
 import { LoadingState, ErrorState, EmptyState } from '@/components/States';
 import { haversine } from '@/api/client';
 import type { ResourceItem, ResourceType } from '@/types/api';
@@ -124,8 +125,15 @@ export default function CoolingMapPage() {
   }
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold text-gray-900">{t('map.title')}</h1>
+    <div className="page-shell">
+      <PageHero
+        title={t('map.title')}
+        description={resources ? `${resources.items.length} locations available in the network` : 'Cooling resources nearby'}
+        status={t('map.closestPlaces')}
+        value={sortedByDistance[0] ? `${Math.round(sortedByDistance[0].distance_km ?? 0)} km` : undefined}
+        valueLabel="Closest"
+        riskLevel="moderate"
+      />
 
       {/* Controls */}
       <div className="flex flex-col md:flex-row gap-3">

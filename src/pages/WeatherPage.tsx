@@ -1,6 +1,7 @@
 import { Thermometer, Droplets, Wind, Sun, Sunrise, Sunset, Cloud } from 'lucide-react';
 import { useI18n } from '@/i18n/context';
 import { useWeather } from '@/hooks/useData';
+import { PageHero } from '@/components/PageHero';
 import { LoadingState, ErrorState, EmptyState } from '@/components/States';
 import { formatHour, formatDate } from '@/utils/risk';
 import {
@@ -24,8 +25,15 @@ export default function WeatherPage() {
   }));
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">{t('weather.title')}</h1>
+    <div className="page-shell">
+      <PageHero
+        title={t('weather.title')}
+        description={weather ? `${weather.current.condition} · ${weather.current.humidity}% humidity` : t('common.loading')}
+        status={t('weather.current')}
+        value={weather ? `${weather.current.temp_c}°C` : undefined}
+        valueLabel={t('weather.temperature')}
+        riskLevel={weather ? (weather.current.temp_c >= 38 ? 'high' : 'moderate') : 'moderate'}
+      />
 
       {/* Current conditions */}
       <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">

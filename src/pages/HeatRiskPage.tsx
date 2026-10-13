@@ -2,6 +2,7 @@ import { AlertTriangle, Info } from 'lucide-react';
 import { useI18n } from '@/i18n/context';
 import { useRisk, useMethodology } from '@/hooks/useData';
 import { RiskBadge } from '@/components/RiskBadge';
+import { PageHero } from '@/components/PageHero';
 import { LoadingState, ErrorState, EmptyState } from '@/components/States';
 import { riskColor, isElevated, formatTimeRange, formatHour } from '@/utils/risk';
 import {
@@ -38,8 +39,15 @@ export default function HeatRiskPage() {
   const colors = riskColor(risk.current.risk_level);
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">{t('nav.risk')}</h1>
+    <div className="page-shell">
+      <PageHero
+        title={t('nav.risk')}
+        description={`${t('risk.currentLevel')}: ${risk.current.risk_level}`}
+        status={t('risk.timeline')}
+        value={`${risk.current.heat_index_c}°C`}
+        valueLabel={t('risk.heatIndex')}
+        riskLevel={risk.current.risk_level}
+      />
 
       {/* Current risk card */}
       <section className={`rounded-2xl shadow-sm border p-6 ${colors.bg} ${colors.border}`}>

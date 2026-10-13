@@ -1,6 +1,7 @@
 import { Check, AlertTriangle, Info, AlertCircle } from 'lucide-react';
 import { useI18n } from '@/i18n/context';
 import { useNotifications } from '@/context/NotificationContext';
+import { PageHero } from '@/components/PageHero';
 import { LoadingState, ErrorState, EmptyState } from '@/components/States';
 import { severityColor } from '@/utils/risk';
 import { formatTimeRange } from '@/utils/risk';
@@ -21,26 +22,24 @@ export default function NotificationsPage() {
     : [];
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <h1 className="text-2xl font-bold text-gray-900">{t('notifications.title')}</h1>
-        <div className="flex items-center gap-3">
+    <div className="page-shell">
+      <PageHero
+        title={t('notifications.title')}
+        description={notifications[0]?.body ?? t('notifications.empty')}
+        status={`${unreadIds.length} unread`}
+        value={String(unreadIds.length)}
+        valueLabel={t('notifications.unread')}
+        riskLevel={notifications.some(n => n.severity === 'danger') ? 'extreme' : notifications.some(n => n.severity === 'warning') ? 'high' : 'moderate'}
+      >
+        <div className="mt-3 flex items-center gap-3">
           {unreadIds.length > 0 && (
-            <>
-              <span className="text-sm text-gray-500">
-                {unreadIds.length} {t('notifications.unread')}
-              </span>
-              <button
-                onClick={markAllRead}
-                className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
-              >
-                <Check size={16} />
-                {t('notifications.markRead')}
-              </button>
-            </>
+            <button onClick={markAllRead} className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1">
+              <Check size={16} />
+              {t('notifications.markRead')}
+            </button>
           )}
         </div>
-      </div>
+      </PageHero>
 
       {loading ? <LoadingState /> : error ? <ErrorState message={error} onRetry={refresh} /> : notifications.length === 0 ? (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">

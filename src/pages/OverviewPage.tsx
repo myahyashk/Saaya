@@ -3,6 +3,7 @@ import { Thermometer, Droplets, Wind, Sun, ArrowRight, MapPin, Clock, AlertTrian
 import { useI18n } from '@/i18n/context';
 import { useWeather, useRisk, useGuidance, useResources } from '@/hooks/useData';
 import { RiskBadge } from '@/components/RiskBadge';
+import { PageHero } from '@/components/PageHero';
 import { LoadingState, ErrorState, EmptyState } from '@/components/States';
 import { riskColor, formatTimeRange } from '@/utils/risk';
 import type { GuidanceIcon } from '@/types/api';
@@ -27,8 +28,15 @@ export default function OverviewPage() {
   const topGuidance = guidance?.items?.slice(0, 3) ?? [];
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">{t('overview.title')}</h1>
+    <div className="page-shell">
+      <PageHero
+        title={t('overview.title')}
+        description={risk ? `${t('risk.currentLevel')}: ${risk.current.risk_level}` : t('overview.noElevated')}
+        status={t('overview.currentWeather')}
+        value={weather ? `${weather.current.temp_c}°C` : undefined}
+        valueLabel={t('weather.temperature')}
+        riskLevel={risk?.current.risk_level ?? 'moderate'}
+      />
 
       {/* Current risk card */}
       <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">

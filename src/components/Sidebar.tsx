@@ -1,17 +1,16 @@
-import { NavLink, Link } from 'react-router-dom';
-import { House, LayoutDashboard, CloudSun, ThermometerSun, ShieldCheck, Bell, MapPinned, Info, MapPin, Languages } from 'lucide-react';
+import { Link, NavLink } from 'react-router-dom';
+import { Bell, CloudSun, Flame, House, Info, Languages, LayoutDashboard, MapPinned, MapPin, ShieldCheck, ThermometerSun, X } from 'lucide-react';
 import { Logo } from './Logo';
 import { useI18n } from '@/i18n/context';
 import { useLocationCtx } from '@/context/LocationContext';
 import { useNotifications } from '@/context/NotificationContext';
-import { useDemo, isDemoAvailable } from '@/context/DemoContext';
+import { isDemoAvailable, useDemo } from '@/context/DemoContext';
 import { LocationToggle } from './LocationToggle';
-import { X, Flame } from 'lucide-react';
 import type { TranslationKey } from '@/i18n/translations';
 
 interface NavItem {
   to: string;
-  icon: typeof LayoutDashboard;
+  icon: typeof House;
   labelKey: TranslationKey | 'Home';
 }
 
@@ -36,33 +35,24 @@ export function Sidebar({ open, collapsed, onClose, onExpand }: SidebarProps) {
   const { t, dir } = useI18n();
   const { location } = useLocationCtx();
   const { unreadIds } = useNotifications();
-  const { extremeMode, setExtremeMode } = useDemo();
+  const { demoMode, nextDemoMode } = useDemo();
   const demoAvailable = isDemoAvailable();
   const hiddenDrawerPosition = dir === 'rtl' ? 'translate-x-full' : '-translate-x-full';
+  const demoLabel = demoMode === 'normal' ? 'Normal day' : demoMode === 'hot' ? 'Hot day' : 'Extreme heat day';
 
   return (
     <>
-      {open && (
-        <div
-          className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm lg:hidden"
-          onClick={onClose}
-          aria-hidden="true"
-        />
-      )}
+      {open && <div className="fixed inset-0 z-[60] bg-slate-950/60 backdrop-blur-sm lg:hidden" onClick={onClose} aria-hidden="true" />}
 
       <aside
-        className={`saaya-sidebar fixed inset-y-0 z-[70] flex w-[288px] flex-col overflow-y-auto sidebar-scroll transition-[width,transform] duration-300 lg:sticky lg:top-0 lg:h-screen ${dir === 'rtl' ? 'right-0' : 'left-0'} ${open ? 'translate-x-0' : `${hiddenDrawerPosition} lg:translate-x-0`} ${collapsed ? 'lg:w-[84px]' : 'lg:w-[272px]'}`}
+        className={`saaya-sidebar fixed inset-y-0 z-[70] flex w-[288px] flex-col overflow-y-auto transition-[transform,width] duration-300 lg:sticky lg:top-0 lg:h-screen ${dir === 'rtl' ? 'right-0' : 'left-0'} ${open ? 'translate-x-0' : `${hiddenDrawerPosition} lg:translate-x-0`} ${collapsed ? 'lg:w-[86px]' : 'lg:w-[272px]'}`}
         aria-label="Sidebar navigation"
       >
-        <div className={`flex min-h-[76px] items-center border-b border-white/10 ${collapsed ? 'justify-center px-3' : 'justify-between px-5'}`}>
+        <div className={`flex min-h-[76px] items-center border-b border-[var(--border)] ${collapsed ? 'justify-center px-3' : 'justify-between px-5'}`}>
           <Link to="/" onClick={onClose} aria-label="Saaya home">
-            <Logo className="text-white" showText={!collapsed} />
+            <Logo className="text-[var(--text)]" showText={!collapsed} />
           </Link>
-          <button
-            onClick={onClose}
-            className="icon-button text-white lg:hidden"
-            aria-label={t('common.close')}
-          >
+          <button onClick={onClose} className="icon-button lg:hidden" aria-label={t('common.close')}>
             <X size={20} />
           </button>
         </div>
@@ -70,75 +60,62 @@ export function Sidebar({ open, collapsed, onClose, onExpand }: SidebarProps) {
         <nav className="flex-1 space-y-1 px-3 py-4" aria-label="Main navigation">
           {navItems.map(item => {
             const Icon = item.icon;
-            const isNotifications = item.to === '/notifications';
             const label = item.labelKey === 'Home' ? 'Home' : t(item.labelKey);
+            const isNotifications = item.to === '/notifications';
+
             return (
               <NavLink
                 key={item.to}
                 to={item.to}
-                end
+                end={item.to === '/'}
                 onClick={onClose}
                 title={collapsed ? label : undefined}
                 aria-label={label}
-                className={({ isActive: active }) =>
-                  `sidebar-link ${collapsed ? 'justify-center px-0' : ''} ${
-                    active ? 'sidebar-link-active' : ''
-                  }`
+                className={({ isActive }) =>
+                  `sidebar-link ${collapsed ? 'justify-center px-0' : ''} ${isActive ? 'sidebar-link-active' : ''}`
                 }
               >
                 <Icon size={19} aria-hidden="true" />
                 {!collapsed && <span className="flex-1">{label}</span>}
                 {isNotifications && unreadIds.length > 0 && (
-                  <span className={`unread-badge ${collapsed ? 'absolute -right-1 -top-1' : ''}`}>
-                    {unreadIds.length}
-                  </span>
+                  <span className={`unread-badge ${collapsed ? 'absolute -right-1 -top-1' : ''}`}>{unreadIds.length}</span>
                 )}
               </NavLink>
             );
           })}
         </nav>
 
-        <div className="space-y-3 border-t border-white/10 px-3 py-4">
+        <div className="space-y-3 border-t border-[var(--border)] px-3 py-4">
           {demoAvailable && (
-            <div className={`flex items-center gap-2 rounded-xl bg-white/5 px-3 py-2 ${collapsed ? 'justify-center' : ''}`}>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={extremeMode}
-                title={collapsed ? t('demo.extremeMode') : undefined}
-                onClick={() => setExtremeMode(!extremeMode)}
-                className={`relative h-5 w-9 flex-shrink-0 rounded-full transition-colors ${extremeMode ? 'bg-red-500' : 'bg-white/20'}`}
-              >
-                <span
-                  className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
-                    extremeMode ? 'left-[18px]' : 'left-0.5'
-                  }`}
-                />
-              </button>
-              {!collapsed && <span className="flex items-center gap-1 text-xs text-slate-300">
-                <Flame size={14} className="text-orange-400" />
-                {t('demo.extremeMode')}
-              </span>}
-            </div>
+            <button
+              type="button"
+              onClick={nextDemoMode}
+              className={`demo-toggle ${collapsed ? 'justify-center' : ''}`}
+              aria-label={`Demo mode: ${demoLabel}`}
+              title={demoLabel}
+            >
+              <Flame size={14} className={demoMode === 'extreme' ? 'text-[var(--sun-amber)]' : 'text-[var(--primary)]'} />
+              {!collapsed && <span>{demoLabel}</span>}
+            </button>
           )}
 
           {collapsed ? (
             <div className="flex flex-col items-center gap-2">
-              <button className="icon-button text-slate-300" onClick={onExpand} title={location.name} aria-label={`${t('location.activeLocation')}: ${location.name}`}>
+              <button className="icon-button" onClick={onExpand} title={location.name} aria-label={`${t('location.activeLocation')}: ${location.name}`}>
                 <MapPin size={18} />
               </button>
-              <button className="icon-button text-slate-300" onClick={onExpand} title={t('language.label')} aria-label={t('language.label')}>
+              <button className="icon-button" onClick={onExpand} title={t('language.label')} aria-label={t('language.label')}>
                 <Languages size={18} />
               </button>
             </div>
           ) : (
             <>
               <div className="px-2 pb-1">
-                <div className="flex items-center gap-2 text-xs text-slate-400">
+                <div className="mb-1 flex items-center gap-2 text-[11px] uppercase tracking-[0.12em] text-[var(--muted)]">
                   <MapPin size={14} />
                   {t('location.activeLocation')}
                 </div>
-                <p className="mt-1 truncate ps-5 text-sm font-semibold text-slate-100">{location.name}</p>
+                <p className="max-w-full truncate ps-5 text-sm font-semibold text-[var(--text)]">{location.name}</p>
               </div>
               <LocationToggle />
               <LanguageSwitcher />
@@ -171,7 +148,7 @@ export function LanguageSwitcher() {
 
   return (
     <div className="px-1">
-      <div className="mb-2 flex items-center gap-1.5 text-xs text-slate-400">
+      <div className="mb-2 flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-[var(--muted)]">
         <Languages size={14} />
         {t('language.label')}
       </div>
@@ -181,7 +158,7 @@ export function LanguageSwitcher() {
             key={l.code}
             onClick={() => setLang(l.code)}
             className={`min-h-9 flex-1 rounded-lg text-xs font-medium transition-colors ${
-              lang === l.code ? 'bg-blue-600 text-white' : 'text-white/60 hover:text-white'
+              lang === l.code ? 'bg-[var(--primary)] text-white' : 'text-[var(--muted)] hover:text-white'
             }`}
             aria-pressed={lang === l.code}
           >
