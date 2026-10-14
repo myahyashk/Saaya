@@ -37,6 +37,7 @@ Open the app at the URL shown in your terminal.
    ```
    VITE_USE_MOCK=false
    VITE_API_BASE_URL=http://localhost:8000
+   VITE_API_USE_PROXY=true
    VITE_DEMO=true
    ```
 
@@ -48,11 +49,84 @@ Open the app at the URL shown in your terminal.
 
 No code changes are needed to switch between mock and real API — it's controlled entirely by environment variables.
 
+## Connect the front end
+
+The frontend defaults to the Vite `/api` proxy in development. Set `VITE_USE_MOCK=false` in `.env.local` and set `VITE_API_BASE_URL` to the backend URL. With `VITE_API_USE_PROXY=true`, the browser requests relative `/api/...` URLs from Vite, which forwards them to the backend and avoids browser CORS for local development. Restart Vite after changing env values.
+
+For direct browser-to-backend requests, set `VITE_API_USE_PROXY=false`. The backend must then allow the frontend origin through CORS. `.env.example` documents these frontend settings; it is a template and must be copied to `.env` or `.env.local` to take effect.
+
+Run the FastAPI backend from its project root (where `main.py` exports `app`):
+
+```bash
+python -m uvicorn main:app --host 0.0.0.0 --port 8000
+```
+
+Open the FastAPI docs at [http://localhost:8000/docs](http://localhost:8000/docs). Uvicorn prints its bind URL on startup. To print a LAN URL from the FastAPI app startup as well, add this in the backend `main.py`:
+
+```python
+import socket
+
+@app.on_event("startup")
+async def print_saaya_api_url():
+   address = socket.gethostbyname(socket.gethostname())
+   print(f"Saaya API LAN URL: http://{address}:8000")
+```
+
+To connect from another device on the same Wi-Fi, use the backend computer's LAN IPv4 address for `VITE_API_BASE_URL` (find it with `hostname -I` on Linux or `ipconfig` on Windows), for example `http://192.168.1.20:8000`. `localhost` on the browser device points back to that device, not to the backend computer. On Windows, allow inbound TCP port 8000 in Windows Defender Firewall; in an elevated PowerShell:
+
+```powershell
+New-NetFirewallRule -DisplayName "Saaya API 8000" -Direction Inbound -Protocol TCP -LocalPort 8000 -Action Allow
+```
+
+Configure the FastAPI app with the frontend origins in `CORS_ORIGINS` (comma-separated). The default origins should be `http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000`; allow all methods and the `Authorization` and `Content-Type` headers. For example:
+
+```python
+import os
+from fastapi.middleware.cors import CORSMiddleware
+
+origins = [
+   origin.strip()
+   for origin in os.getenv(
+      "CORS_ORIGINS",
+      "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000",
+   ).split(",")
+   if origin.strip()
+]
+
+app.add_middleware(
+   CORSMiddleware,
+   allow_origins=origins,
+   allow_methods=["*"],
+   allow_headers=["Authorization", "Content-Type"],
+)
+```
+
+Keep the health route public (do not attach an auth dependency) and return the required shape:
+
+```python
+from datetime import datetime, timezone
+
+@app.get("/api/health")
+def health():
+   return {"status": "ok", "time": datetime.now(timezone.utc).isoformat()}
+```
+
+The backend source is maintained separately from this frontend repository, so the CORS middleware, startup URL print, and health route must be applied in that FastAPI project.
+
+Run the public endpoint smoke test from this repository after starting the backend:
+
+```bash
+python scripts/smoke_test.py --base-url http://localhost:8000
+```
+
+The script checks health, locations, weather, risk, guidance, notifications, resources, city risk, and methodology, and prints each HTTP status and response time.
+
 ## Environment variables
 
 | Variable | Default | Description |
 |---|---|---|
 | `VITE_API_BASE_URL` | `http://localhost:8000` | Backend API base URL |
+| `VITE_API_USE_PROXY` | `true` | `true` = relative `/api` through Vite; `false` = direct backend request |
 | `VITE_USE_MOCK` | `false` | `true` = serve local mock JSON |
 | `VITE_DEMO` | `false` | `true` = show "simulate extreme heat" toggle in sidebar |
 

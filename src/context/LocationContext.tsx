@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, useCallback, type React
 import type { LocationItem } from '@/types/api';
 import { api } from '@/api/client';
 import { resolveLocation, requestGeolocation, getDefaultCity, findCityById, type ResolvedLocation } from '@/utils/location';
+import { useConnection } from '@/context/ConnectionContext';
 
 interface LocationContextValue {
   location: ResolvedLocation;
@@ -20,6 +21,7 @@ const CITY_KEY = 'saaya-selected-city';
 const GEO_KEY = 'saaya-use-geo';
 
 export function LocationProvider({ children }: { children: ReactNode }) {
+  const { isUsingMockData } = useConnection();
   const [cities, setCities] = useState<LocationItem[]>([]);
   const [selectedCityId, setSelectedCityIdState] = useState<string | null>(() => localStorage.getItem(CITY_KEY));
   const [useGeo, setUseGeoState] = useState<boolean>(() => localStorage.getItem(GEO_KEY) === 'true');
@@ -30,7 +32,7 @@ export function LocationProvider({ children }: { children: ReactNode }) {
     api.locations().then(res => {
       setCities(res.items);
     }).catch(() => { /* keep empty; fallback handles it */ });
-  }, []);
+  }, [isUsingMockData]);
 
   const doGeolocation = useCallback(async () => {
     setGeoStatus('detecting');

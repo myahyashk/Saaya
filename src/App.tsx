@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { I18nProvider } from '@/i18n/context';
 import { LocationProvider } from '@/context/LocationContext';
 import { DemoProvider } from '@/context/DemoContext';
+import { ConnectionProvider } from '@/context/ConnectionContext';
 import { NotificationProvider } from '@/context/NotificationContext';
 import { AlertModal } from '@/components/AlertModal';
 import { ToastContainer } from '@/components/Toast';
@@ -14,13 +15,15 @@ import HeatRiskPage from '@/pages/HeatRiskPage';
 import GuidancePage from '@/pages/GuidancePage';
 import NotificationsPage from '@/pages/NotificationsPage';
 import CoolingMapPage from '@/pages/CoolingMapPage';
+import DiagnosticsPage from '@/pages/DiagnosticsPage';
 
 export default function App() {
   return (
     <I18nProvider>
-      <DemoProvider>
-        <LocationProvider>
-          <NotificationProvider>
+      <ConnectionProvider>
+        <DemoProvider>
+          <LocationProvider>
+            <NotificationProvider>
             <BrowserRouter>
               <Routes>
                 <Route path="/" element={<DashboardLayout />}>
@@ -32,14 +35,16 @@ export default function App() {
                   <Route path="notifications" element={<NotificationsPage />} />
                   <Route path="map" element={<CoolingMapPage />} />
                   <Route path="disclaimer" element={<DisclaimerPage />} />
+                  <Route path="diagnostics" element={<DiagnosticsPage />} />
                 </Route>
               </Routes>
               <AlertModal />
               <ToastContainer />
             </BrowserRouter>
-          </NotificationProvider>
-        </LocationProvider>
-      </DemoProvider>
+            </NotificationProvider>
+          </LocationProvider>
+        </DemoProvider>
+      </ConnectionProvider>
     </I18nProvider>
   );
 }

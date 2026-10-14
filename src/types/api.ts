@@ -27,7 +27,7 @@ export interface LocationInfo {
 
 export interface HealthResponse {
   status: string;
-  demo_mode: boolean;
+  demo_mode?: boolean;
   time: string;
 }
 

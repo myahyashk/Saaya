@@ -3,6 +3,8 @@ import { useLocation } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Clock3, Menu, MapPin, RefreshCw } from 'lucide-react';
 import { useLocationCtx } from '@/context/LocationContext';
 import { useI18n } from '@/i18n/context';
+import { useConnection } from '@/context/ConnectionContext';
+import { useDemo } from '@/context/DemoContext';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -13,6 +15,8 @@ interface HeaderProps {
 export function Header({ onMenuClick, onToggleSidebar, sidebarCollapsed }: HeaderProps) {
   const { location } = useLocationCtx();
   const { t, dir } = useI18n();
+  const { mode } = useConnection();
+  const { scenario } = useDemo();
   const { pathname } = useLocation();
   const [updatedAt, setUpdatedAt] = useState(() => new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -38,6 +42,7 @@ export function Header({ onMenuClick, onToggleSidebar, sidebarCollapsed }: Heade
     '/notifications': t('notifications.title'),
     '/map': t('map.title'),
     '/disclaimer': t('disclaimer.title'),
+    '/diagnostics': t('diagnostics.title'),
   }), [t]);
 
   function refreshPage() {
@@ -47,6 +52,11 @@ export function Header({ onMenuClick, onToggleSidebar, sidebarCollapsed }: Heade
   }
 
   const stale = (Date.now() - updatedAt.getTime()) > 30 * 60 * 1000;
+  const connectionLabel = mode === 'demo' || scenario === 'extreme'
+    ? t('connection.demo')
+    : mode === 'connected'
+      ? t('connection.connected')
+      : t('connection.offline');
 
   return (
     <>
@@ -68,9 +78,9 @@ export function Header({ onMenuClick, onToggleSidebar, sidebarCollapsed }: Heade
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               <h1 className="truncate text-base font-semibold md:text-lg">{titles[pathname] ?? 'Saaya'}</h1>
-              <span className="live-chip">
+              <span className="live-chip" aria-live="polite">
                 <span className="live-dot" />
-                LIVE
+                {connectionLabel}
               </span>
             </div>
             <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--muted)]">

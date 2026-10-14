@@ -4,6 +4,7 @@ import { api } from '@/api/client';
 import { useLocationCtx } from './LocationContext';
 import { useI18n } from '@/i18n/context';
 import { useDemo } from './DemoContext';
+import { useConnection } from './ConnectionContext';
 import { toastFromNotification } from '@/components/Toast';
 import {
   shouldShowAlertModal,
@@ -16,7 +17,7 @@ import {
 interface NotificationContextValue {
   data: NotificationsResponse | null;
   loading: boolean;
-  error: string | null;
+  error: Error | null;
   unreadIds: string[];
   markRead: (id: string) => void;
   markAllRead: () => void;
@@ -36,9 +37,10 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
   const { location } = useLocationCtx();
   const { lang } = useI18n();
   const { scenario } = useDemo();
+  const { isUsingMockData } = useConnection();
   const [data, setData] = useState<NotificationsResponse | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<Error | null>(null);
   const [readIds, setReadIds] = useState<string[]>(() => {
     try { return JSON.parse(localStorage.getItem(READ_KEY) || '[]'); } catch { return []; }
   });
@@ -86,7 +88,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
         setShowAlertModal(false);
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load notifications');
+      setError(e instanceof Error ? e : new Error('Failed to load notifications'));
     } finally {
       setLoading(false);
     }
@@ -94,7 +96,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     fetchNotifications();
-  }, [fetchNotifications]);
+  }, [fetchNotifications, isUsingMockData]);
 
   // Poll every 5 minutes
   useEffect(() => {
@@ -102,7 +104,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       fetchNotifications();
     }, POLL_INTERVAL);
     return () => clearInterval(interval);
-  }, [fetchNotifications]);
+  }, [fetchNotifications, isUsingMockData]);
 
   const markRead = useCallback((id: string) => {
     setReadIds(prev => {

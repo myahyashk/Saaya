@@ -3,6 +3,42 @@ import type { NotificationItem } from '@/types/api';
 import { isElevated, shouldShowAlertModal, isAlertDismissed, markAlertDismissed, dedupeKey, formatTimeRange } from '@/utils/risk';
 import { resolveLocation, getDefaultCity, findCityById } from '@/utils/location';
 import type { CityOption } from '@/utils/location';
+import { createApiConfiguration, normalizeApiBaseUrl, parseBooleanFlag } from '@/api/config';
+import { classifyApiError, HttpError, NetworkError, ShapeError } from '@/api/client';
+import { resolveConnectionMode, shouldOfferDemo } from '@/context/connectionState';
+
+describe('API configuration', () => {
+  it('does not treat the string false as enabled', () => {
+    expect(parseBooleanFlag('false')).toBe(false);
+    expect(createApiConfiguration({ VITE_USE_MOCK: 'false' }).useMock).toBe(false);
+  });
+
+  it('normalizes the backend URL and configures relative proxy requests', () => {
+    expect(normalizeApiBaseUrl(' http://api.example.test/// ')).toBe('http://api.example.test');
+    expect(createApiConfiguration({ VITE_API_USE_PROXY: 'true' }).useProxy).toBe(true);
+    expect(createApiConfiguration().useProxy).toBe(true);
+    expect(createApiConfiguration({ VITE_API_USE_PROXY: 'false' }).useProxy).toBe(false);
+  });
+});
+
+describe('API error classification', () => {
+  it('distinguishes network, HTTP, and response-shape errors', () => {
+    expect(classifyApiError(new NetworkError('http://localhost:8000/api/health', 'offline'))).toBe('NetworkError');
+    expect(classifyApiError(new HttpError(422, 'Invalid coordinates', 'http://localhost:8000/api/weather'))).toBe('HttpError');
+    expect(classifyApiError(new ShapeError('Missing items', 'http://localhost:8000/api/locations'))).toBe('ShapeError');
+  });
+});
+
+describe('connection fallback policy', () => {
+  it('offers demo only after failed health checks and demo remains opt-in', () => {
+    expect(resolveConnectionMode(false, false, false)).toBe('offline');
+    expect(shouldOfferDemo('offline', false)).toBe(false);
+    expect(shouldOfferDemo('offline', true)).toBe(true);
+    expect(resolveConnectionMode(false, true, false)).toBe('demo');
+    expect(resolveConnectionMode(false, false, true)).toBe('connected');
+    expect(resolveConnectionMode(true, false, true)).toBe('demo');
+  });
+});
 
 const cities: CityOption[] = [
   { id: 'khairpur', name: 'Khairpur Mirs', province: 'Sindh', lat: 27.5, lon: 68.7, default: true },

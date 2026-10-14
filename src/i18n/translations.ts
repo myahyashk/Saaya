@@ -112,7 +112,32 @@ export type TranslationKey =
   | 'footer.disclaimer'
   | 'footer.officialSources'
   | 'common.back'
-  | 'sidebar.disclaimer';
+  | 'sidebar.disclaimer'
+  | 'connection.connected'
+  | 'connection.offline'
+  | 'connection.demo'
+  | 'connection.cannotReach'
+  | 'connection.causes'
+  | 'connection.serverUnavailable'
+  | 'connection.useDemo'
+  | 'connection.httpError'
+  | 'connection.shapeError'
+  | 'diagnostics.title'
+  | 'diagnostics.baseUrl'
+  | 'diagnostics.mockMode'
+  | 'diagnostics.proxyMode'
+  | 'diagnostics.health'
+  | 'diagnostics.lastFailures'
+  | 'diagnostics.testEndpoints'
+  | 'diagnostics.testing'
+  | 'diagnostics.pass'
+  | 'diagnostics.fail'
+  | 'diagnostics.responseTime'
+  | 'diagnostics.noFailures'
+  | 'diagnostics.mockEnabled'
+  | 'diagnostics.mockDisabled'
+  | 'diagnostics.proxyEnabled'
+  | 'diagnostics.proxyDisabled';
 
 type TranslationDict = Record<TranslationKey, string>;
 
@@ -138,6 +163,31 @@ const en: TranslationDict = {
   'common.loading': 'Loading…',
   'common.error': 'Something went wrong',
   'common.retry': 'Retry',
+  'connection.connected': 'Connected',
+  'connection.offline': 'Offline',
+  'connection.demo': 'Demo data',
+  'connection.cannotReach': 'Cannot reach the Saaya server at {url}',
+  'connection.causes': 'Check that the server is running, the URL and port are correct, and CORS allows this origin.',
+  'connection.serverUnavailable': 'Server not reachable. Demo data is available.',
+  'connection.useDemo': 'Use demo data',
+  'connection.httpError': 'HTTP {status}: {message}',
+  'connection.shapeError': 'The server response does not match the expected data format.',
+  'diagnostics.title': 'API diagnostics',
+  'diagnostics.baseUrl': 'Backend base URL',
+  'diagnostics.mockMode': 'Mock mode',
+  'diagnostics.proxyMode': 'Request mode',
+  'diagnostics.health': 'Health check',
+  'diagnostics.lastFailures': 'Last 10 failed requests',
+  'diagnostics.testEndpoints': 'Test all endpoints',
+  'diagnostics.testing': 'Testing…',
+  'diagnostics.pass': 'Pass',
+  'diagnostics.fail': 'Fail',
+  'diagnostics.responseTime': 'Response time',
+  'diagnostics.noFailures': 'No failed requests recorded.',
+  'diagnostics.mockEnabled': 'On',
+  'diagnostics.mockDisabled': 'Off',
+  'diagnostics.proxyEnabled': 'Relative /api via Vite proxy',
+  'diagnostics.proxyDisabled': 'Direct backend URL',
   'common.empty': 'No data available',
   'common.refresh': 'Refresh',
   'common.close': 'Close',
@@ -254,6 +304,31 @@ const ur: TranslationDict = {
   'common.loading': 'لوڈ ہو رہا ہے…',
   'common.error': 'کچھ غلط ہو گیا',
   'common.retry': 'دوبارہ کوشش',
+  'connection.connected': 'منسلک',
+  'connection.offline': 'آف لائن',
+  'connection.demo': 'ڈیمو ڈیٹا',
+  'connection.cannotReach': 'سایا سرور تک رسائی نہیں ہو رہی: {url}',
+  'connection.causes': 'سرور چلنے، URL اور پورٹ درست ہونے، اور CORS اجازت کی تصدیق کریں۔',
+  'connection.serverUnavailable': 'سرور دستیاب نہیں۔ ڈیمو ڈیٹا استعمال کیا جا سکتا ہے۔',
+  'connection.useDemo': 'ڈیمو ڈیٹا استعمال کریں',
+  'connection.httpError': 'HTTP {status}: {message}',
+  'connection.shapeError': 'سرور کا جواب مطلوبہ ڈیٹا فارمیٹ سے مطابقت نہیں رکھتا۔',
+  'diagnostics.title': 'API تشخیص',
+  'diagnostics.baseUrl': 'بیک اینڈ کا بنیادی URL',
+  'diagnostics.mockMode': 'موک موڈ',
+  'diagnostics.proxyMode': 'درخواست کا طریقہ',
+  'diagnostics.health': 'صحت کی جانچ',
+  'diagnostics.lastFailures': 'آخری 10 ناکام درخواستیں',
+  'diagnostics.testEndpoints': 'تمام اینڈ پوائنٹس کی جانچ',
+  'diagnostics.testing': 'جانچ جاری ہے…',
+  'diagnostics.pass': 'کامیاب',
+  'diagnostics.fail': 'ناکام',
+  'diagnostics.responseTime': 'جواب کا وقت',
+  'diagnostics.noFailures': 'کوئی ناکام درخواست محفوظ نہیں ہوئی۔',
+  'diagnostics.mockEnabled': 'آن',
+  'diagnostics.mockDisabled': 'آف',
+  'diagnostics.proxyEnabled': 'Vite پراکسی کے ذریعے /api',
+  'diagnostics.proxyDisabled': 'براہ راست بیک اینڈ URL',
   'common.empty': 'کوئی ڈیٹا دستیاب نہیں',
   'common.refresh': 'تازہ کریں',
   'common.close': 'بند کریں',
@@ -370,6 +445,31 @@ const sd: TranslationDict = {
   'common.loading': 'لوڊ ٿي رهيو آهي…',
   'common.error': 'ڪجهه غلط ٿيو',
   'common.retry': 'ٻيهر ڪوشش',
+  'connection.connected': 'ڳنڍيل',
+  'connection.offline': 'آف لائن',
+  'connection.demo': 'ڊيمو ڊيٽا',
+  'connection.cannotReach': 'سايا سرور تائين پهچي نٿو سگهجي: {url}',
+  'connection.causes': 'سرور، درست URL ۽ پورٽ، ۽ CORS اجازت جي تصديق ڪريو.',
+  'connection.serverUnavailable': 'سرور دستياب ناهي. ڊيمو ڊيٽا استعمال ڪري سگهجي ٿي.',
+  'connection.useDemo': 'ڊيمو ڊيٽا استعمال ڪريو',
+  'connection.httpError': 'HTTP {status}: {message}',
+  'connection.shapeError': 'سرور جو جواب گهربل ڊيٽا فارميٽ سان نٿو ملي.',
+  'diagnostics.title': 'API جاچ',
+  'diagnostics.baseUrl': 'بيڪ اينڊ جو بنيادي URL',
+  'diagnostics.mockMode': 'موڪ موڊ',
+  'diagnostics.proxyMode': 'درخواست جو طريقو',
+  'diagnostics.health': 'صحت جي جاچ',
+  'diagnostics.lastFailures': 'آخري 10 ناڪام درخواستون',
+  'diagnostics.testEndpoints': 'سڀني اينڊ پوائنٽس جي جاچ',
+  'diagnostics.testing': 'جاچ جاري آهي…',
+  'diagnostics.pass': 'ڪامياب',
+  'diagnostics.fail': 'ناڪام',
+  'diagnostics.responseTime': 'جواب جو وقت',
+  'diagnostics.noFailures': 'ڪا ناڪام درخواست محفوظ ناهي.',
+  'diagnostics.mockEnabled': 'آن',
+  'diagnostics.mockDisabled': 'بند',
+  'diagnostics.proxyEnabled': 'Vite پراڪسي ذريعي /api',
+  'diagnostics.proxyDisabled': 'سڌو بيڪ اينڊ URL',
   'common.empty': 'ڪابه ڊيٽا دستياب ناهي',
   'common.refresh': 'تازو ڪريو',
   'common.close': 'بند ڪريو',

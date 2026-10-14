@@ -1,4 +1,4 @@
-import { ArrowDownRight, ArrowRight, Baby, Bell, BriefcaseBusiness, CloudSun, Droplets, ExternalLink, HeartPulse, Languages, MapPinned, ShieldCheck, Sun, ThermometerSun, Users } from 'lucide-react';
+import { ArrowRight, Baby, Bell, BriefcaseBusiness, CloudSun, Droplets, ExternalLink, HeartPulse, Languages, MapPinned, ShieldCheck, Sun, ThermometerSun, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { CircleMarker, MapContainer, Popup, TileLayer } from 'react-leaflet';
 import { PageHero } from '@/components/PageHero';
