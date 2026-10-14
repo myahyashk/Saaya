@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { afterEach, describe, it, expect, vi } from 'vitest';
 import type { NotificationItem } from '@/types/api';
 import { isElevated, shouldShowAlertModal, isAlertDismissed, markAlertDismissed, dedupeKey, formatTimeRange } from '@/utils/risk';
 import { resolveLocation, getDefaultCity, findCityById } from '@/utils/location';
@@ -7,6 +7,7 @@ import { createApiConfiguration, normalizeApiBaseUrl, parseBooleanFlag } from '@
 import { classifyApiError, HttpError, NetworkError, ShapeError } from '@/api/client';
 import { resolveConnectionMode, shouldOfferDemo } from '@/context/connectionState';
 import { DEFAULT_MAP_TILE_URL, resolveMapTileUrl } from '@/config/mapTiles';
+import { withLocalFallback, getEndpointSource } from '@/localEngine/source';
 
 describe('API configuration', () => {
   it('does not treat the string false as enabled', () => {
@@ -46,6 +47,43 @@ describe('connection fallback policy', () => {
     expect(resolveConnectionMode(false, true, false)).toBe('demo');
     expect(resolveConnectionMode(false, false, true)).toBe('connected');
     expect(resolveConnectionMode(true, false, true)).toBe('demo');
+  });
+});
+
+describe('automatic local engine fallback', () => {
+  afterEach(() => {
+    vi.clearAllTimers();
+    vi.useRealTimers();
+  });
+
+  it.each([
+    ['backend unavailable', new NetworkError('http://api.test/api/weather', 'offline')],
+    ['server error', new HttpError(500, 'Internal error', 'http://api.test/api/weather')],
+    ['bad response shape', new ShapeError('Invalid payload', 'http://api.test/api/weather')],
+    ['bad request', new HttpError(422, 'Missing lat', 'http://api.test/api/weather')],
+  ])('serves local data for %s', async (label, error) => {
+    vi.useFakeTimers();
+    const data = await withLocalFallback({
+      endpoint: `fallback-${String(label)}`,
+      requestApi: () => Promise.reject(error),
+      requestLocal: () => ({ source: 'local' }),
+    });
+    expect(data).toEqual({ source: 'local' });
+    expect(getEndpointSource(`fallback-${String(label)}`)).toBe('local');
+  });
+
+  it('returns to the API source when the 60-second background check succeeds', async () => {
+    vi.useFakeTimers();
+    let backendAvailable = false;
+    const requestApi = async () => {
+      if (!backendAvailable) throw new HttpError(503, 'Unavailable', 'http://api.test/api/weather');
+      return { source: 'api' };
+    };
+    const endpoint = 'recovery-weather';
+    await withLocalFallback({ endpoint, requestApi, requestLocal: () => ({ source: 'local' }) });
+    backendAvailable = true;
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(getEndpointSource(endpoint)).toBe('api');
   });
 });
 
