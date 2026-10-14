@@ -94,6 +94,7 @@ export type TranslationKey =
   | 'map.assistance'
   | 'map.closestPlaces'
   | 'map.noResults'
+  | 'map.tileError'
   | 'alert.title'
   | 'alert.timeWindow'
   | 'alert.topActions'
@@ -154,7 +155,7 @@ const en: TranslationDict = {
   'location.selectCity': 'Select city',
   'location.activeLocation': 'Active location',
   'location.detecting': 'Detecting location…',
-  'location.denied': 'Location denied — using city picker',
+  'location.denied': 'Location is blocked. Allow it in the browser settings, or pick a city',
   'location.grant': 'Grant location',
   'language.label': 'Language',
   'language.en': 'English',
@@ -260,6 +261,7 @@ const en: TranslationDict = {
   'map.assistance': 'Assistance',
   'map.closestPlaces': 'Closest places',
   'map.noResults': 'No places found',
+  'map.tileError': 'Map tiles could not load. Markers and places are still available.',
   'alert.title': 'Extreme heat warning',
   'alert.timeWindow': 'Time window',
   'alert.topActions': 'Top actions',
@@ -295,7 +297,7 @@ const ur: TranslationDict = {
   'location.selectCity': 'شہر منتخب کریں',
   'location.activeLocation': 'موجودہ لوکیشن',
   'location.detecting': 'لوکیشن معلوم ہو رہی ہے…',
-  'location.denied': 'لوکیشن مسترد — شہر کا انتخاب استعمال کریں',
+  'location.denied': 'لوکیشن بلاک ہے۔ براؤزر سیٹنگز میں اجازت دیں، یا شہر منتخب کریں',
   'location.grant': 'لوکیشن دیں',
   'language.label': 'زبان',
   'language.en': 'انگلش',
@@ -401,6 +403,7 @@ const ur: TranslationDict = {
   'map.assistance': 'مدد',
   'map.closestPlaces': 'قریب ترین جگہیں',
   'map.noResults': 'کوئی جگہ نہیں ملی',
+  'map.tileError': 'نقشے کی ٹائلیں لوڈ نہیں ہو سکیں۔ مارکر اور جگہیں دستیاب ہیں۔',
   'alert.title': 'انتہائی گرمی وارننگ',
   'alert.timeWindow': 'وقت کی ونڈو',
   'alert.topActions': 'بہترین اقدامات',
@@ -436,7 +439,7 @@ const sd: TranslationDict = {
   'location.selectCity': 'شهر چونڊيو',
   'location.activeLocation': 'موجوده لوڪيشن',
   'location.detecting': 'لوڪيشن معلوم ٿي رهي آهي…',
-  'location.denied': 'لوڪيشن رد — شهر جو انتخاب استعمال ڪريو',
+  'location.denied': 'لوڪيشن بند آهي. برائوزر سيٽنگن ۾ اجازت ڏيو، يا شهر چونڊيو',
   'location.grant': 'لوڪيشن ڏيو',
   'language.label': 'زبان',
   'language.en': 'انگريزي',
@@ -542,6 +545,7 @@ const sd: TranslationDict = {
   'map.assistance': 'مدد',
   'map.closestPlaces': 'ويجهي جڳهون',
   'map.noResults': 'ڪابه جڳهه نه ملي',
+  'map.tileError': 'نقشي جون ٽائلس لوڊ نه ٿيون. مارڪر ۽ جڳهون موجود آهن.',
   'alert.title': 'انتهايي گرمي تنبه',
   'alert.timeWindow': 'وقت جي ونڊو',
   'alert.topActions': 'بهترين عمل',

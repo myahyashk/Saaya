@@ -1,5 +1,5 @@
 import { useState, useRef, useMemo } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, Marker, Popup, useMap } from 'react-leaflet';
 import MarkerClusterGroup from 'react-leaflet-cluster';
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.css';
 import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css';
@@ -11,6 +11,7 @@ import { useLocationCtx } from '@/context/LocationContext';
 import { PageHero } from '@/components/PageHero';
 import { LoadingState, ErrorState, EmptyState } from '@/components/States';
 import { haversine } from '@/api/client';
+import { ResilientMapTiles } from '@/components/ResilientMapTiles';
 import type { ResourceItem, ResourceType } from '@/types/api';
 import type { TranslationKey } from '@/i18n/translations';
 
@@ -82,6 +83,8 @@ export default function CoolingMapPage() {
   const [provinceFilter, setProvinceFilter] = useState<string>('');
   const [bbox, setBbox] = useState<string>('');
   const [nearbyList, setNearbyList] = useState<ResourceItem[] | null>(null);
+  const [tileError, setTileError] = useState(false);
+  const [tileRetryKey, setTileRetryKey] = useState(0);
   const mapRef = useRef<L.Map | null>(null);
 
   const { data: resources, loading, error, refetch } = useResources({
@@ -186,10 +189,7 @@ export default function CoolingMapPage() {
               handleMapMove();
             }}
           >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; OpenStreetMap contributors'
-            />
+            <ResilientMapTiles key={tileRetryKey} onTileError={() => setTileError(true)} />
 
             {/* Resource markers */}
             <MarkerClusterGroup chunkedLoading>
@@ -249,6 +249,21 @@ export default function CoolingMapPage() {
 
             <FlyToButton target={[location.lat, location.lon]} label={t('map.nearMe')} />
           </MapContainer>
+
+          {tileError && (
+            <div className="absolute left-3 top-3 z-[1000] flex max-w-[calc(100%-1.5rem)] items-center gap-3 rounded-lg border border-slate-200 bg-white/95 px-3 py-2 text-xs text-slate-800 shadow-md" role="status" aria-live="polite">
+              <span>{t('map.tileError')}</span>
+              <button
+                onClick={() => {
+                  setTileError(false);
+                  setTileRetryKey(key => key + 1);
+                }}
+                className="shrink-0 rounded-md bg-blue-600 px-2.5 py-1.5 font-semibold text-white hover:bg-blue-700"
+              >
+                {t('common.retry')}
+              </button>
+            </div>
+          )}
 
           {loading && (
             <div className="absolute inset-0 bg-white/60 flex items-center justify-center">

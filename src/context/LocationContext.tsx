@@ -3,6 +3,7 @@ import type { LocationItem } from '@/types/api';
 import { api } from '@/api/client';
 import { resolveLocation, requestGeolocation, getDefaultCity, findCityById, type ResolvedLocation } from '@/utils/location';
 import { useConnection } from '@/context/ConnectionContext';
+import { mockData } from '@/api/mockData';
 
 interface LocationContextValue {
   location: ResolvedLocation;
@@ -31,7 +32,9 @@ export function LocationProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     api.locations().then(res => {
       setCities(res.items);
-    }).catch(() => { /* keep empty; fallback handles it */ });
+    }).catch(() => {
+      setCities(mockData.locations().items);
+    });
   }, [isUsingMockData]);
 
   const doGeolocation = useCallback(async () => {

@@ -6,6 +6,7 @@ import type { CityOption } from '@/utils/location';
 import { createApiConfiguration, normalizeApiBaseUrl, parseBooleanFlag } from '@/api/config';
 import { classifyApiError, HttpError, NetworkError, ShapeError } from '@/api/client';
 import { resolveConnectionMode, shouldOfferDemo } from '@/context/connectionState';
+import { DEFAULT_MAP_TILE_URL, resolveMapTileUrl } from '@/config/mapTiles';
 
 describe('API configuration', () => {
   it('does not treat the string false as enabled', () => {
@@ -18,6 +19,14 @@ describe('API configuration', () => {
     expect(createApiConfiguration({ VITE_API_USE_PROXY: 'true' }).useProxy).toBe(true);
     expect(createApiConfiguration().useProxy).toBe(true);
     expect(createApiConfiguration({ VITE_API_USE_PROXY: 'false' }).useProxy).toBe(false);
+  });
+});
+
+describe('map tile configuration', () => {
+  it('uses CARTO dark tiles by default and supports an env override', () => {
+    expect(resolveMapTileUrl()).toBe(DEFAULT_MAP_TILE_URL);
+    expect(resolveMapTileUrl(' https://tiles.example.test/{z}/{x}/{y}.png ')).toBe('https://tiles.example.test/{z}/{x}/{y}.png');
+    expect(resolveMapTileUrl('')).toBe(DEFAULT_MAP_TILE_URL);
   });
 });
 

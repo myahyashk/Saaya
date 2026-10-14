@@ -1,7 +1,8 @@
 import { ArrowRight, Baby, Bell, BriefcaseBusiness, CloudSun, Droplets, ExternalLink, HeartPulse, Languages, MapPinned, ShieldCheck, Sun, ThermometerSun, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { CircleMarker, MapContainer, Popup, TileLayer } from 'react-leaflet';
+import { CircleMarker, MapContainer, Popup } from 'react-leaflet';
 import { PageHero } from '@/components/PageHero';
+import { ResilientMapTiles } from '@/components/ResilientMapTiles';
 import { RiskBadge } from '@/components/RiskBadge';
 import { LoadingState, ErrorState } from '@/components/States';
 import { useI18n } from '@/i18n/context';
@@ -136,7 +137,7 @@ export default function LandingPage() {
           <div className="mt-3 h-[260px] overflow-hidden rounded-2xl border border-[var(--border)] bg-[#0a1422]">
             {resourcesLoading ? <div className="h-full p-4"><LoadingState /></div> : resourcesError ? <div className="h-full p-4"><ErrorState message={resourcesError} /></div> : (
               <MapContainer center={[location.lat, location.lon]} zoom={9} scrollWheelZoom={false} dragging={false} zoomControl={false} doubleClickZoom={false} keyboard={false} style={{ height: '100%', width: '100%' }}>
-                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="&copy; OpenStreetMap contributors" />
+                <ResilientMapTiles />
                 {resources?.items.slice(0, 8).map(place => (
                   <CircleMarker key={place.id} center={[place.lat, place.lon]} radius={7} pathOptions={{ color: '#071321', weight: 2, fillColor: resourceColors[place.type], fillOpacity: 1 }}>
                     <Popup>{place.name}</Popup>
